@@ -2,6 +2,10 @@
 
 Projeto de Matemática Discreta — cohort 8. Jogo de mineração, fabricação de espadas e combate que aplica conjuntos e probabilidade.
 
+## Jogar online
+
+[Jogue Forja do Acaso no navegador](https://capstone-matematica-discreta-cohort.vercel.app).
+
 ## Estrutura
 
 - `index.html`: elementos da tela.
