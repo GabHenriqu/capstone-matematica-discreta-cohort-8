@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#151c22" />
+    <title>Forja do Acaso</title>
+    <link rel="stylesheet" href="estilos/jogo.css" />
+  </head>
+  <body>
+    <section class="play-screen" aria-label="Jogo">
+      <header class="topbar">
+        <div class="brand">
+          <img src="assets/sword.svg" alt="" />
+          <h1>FORJA DO ACASO</h1>
+          <span>v3</span>
+        </div>
+        <nav>
+          <a href="#mathematics">Matemática ↓</a>
+          <span id="save-status">Salvo localmente</span>
+          <button id="restart" class="quiet">Recomeçar</button>
+        </nav>
+      </header>
+      <section class="hud" aria-label="Estado do guerreiro">
+        <div class="hud-health">
+          <div>
+            <span>Vida do guerreiro</span>
+            <strong id="hero-hp">100 / 100</strong>
+          </div>
+          <div class="meter">
+            <i id="hero-health"> </i>
+          </div>
+        </div>
+        <div class="wallet">
+          <img src="assets/coin.svg" alt="" />
+          <strong id="coins">0</strong>
+          <span>moedas</span>
+        </div>
+        <div class="hud-activity">
+          <span>Atividade</span>
+          <strong id="activity">Parado</strong>
+        </div>
+      </section>
+      <div class="notice" id="notice" role="status" hidden>
+        <span id="notice-text"> </span>
+        <button id="dismiss-notice" class="quiet">Entendi</button>
+      </div>
+      <main class="game-grid">
+        <section class="panel mine-panel" aria-labelledby="mine-title">
+          <div class="panel-heading">
+            <h2 id="mine-title">Mineração</h2>
+            <img
+              src="assets/mine.svg"
+              class="mine-thumbnail"
+              alt="Entrada de uma mina desenhada em traços brancos"
+            />
+          </div>
+          <div class="mine-options" aria-label="Áreas de mineração">
+            <button class="mine-option selected" id="mine-surface" aria-pressed="true">
+              <img src="assets/pickaxe.svg" alt="" />
+              <div>
+                <strong>Superfície</strong>
+                <small id="surface-time">4,0 s / escavação</small>
+              </div>
+              <i> </i>
+            </button>
+            <button class="mine-option" id="mine-deep" aria-pressed="false">
+              <img src="assets/pickaxe.svg" alt="" />
+              <div>
+                <strong>Profunda</strong>
+                <small id="deep-time">Vença o nível 3</small>
+              </div>
+              <i> </i>
+            </button>
+          </div>
+          <div class="inventory" aria-label="Materiais no inventário">
+            <div class="resource-row stone">
+              <img src="assets/ore-stone.svg" alt="" />
+              <div>
+                <strong>Pedra</strong>
+                <small id="chance-pedra">70%</small>
+              </div>
+              <b id="count-pedra">0</b>
+            </div>
+            <div class="resource-row gold">
+              <img src="assets/ore-gold.svg" alt="" />
+              <div>
+                <strong>Ouro</strong>
+                <small id="chance-ouro">25%</small>
+              </div>
+              <b id="count-ouro">0</b>
+            </div>
+            <div class="resource-row diamond">
+              <img src="assets/ore-diamond.svg" alt="" />
+              <div>
+                <strong>Diamante</strong>
+                <small id="chance-diamante">5%</small>
+              </div>
+              <b id="count-diamante">0</b>
+            </div>
+          </div>
+          <div class="mine-controls">
+            <div class="line-label">
+              <span>Próxima escavação</span>
+              <span id="mine-timer">4,0 s</span>
+            </div>
+            <div class="action-track">
+              <i id="mine-progress"> </i>
+            </div>
+            <button class="button primary full" id="mine">
+              <img src="assets/pickaxe.svg" alt="" />
+              <span id="mine-label">Minerar</span>
+            </button>
+          </div>
+          <p class="panel-note" id="mine-note">
+            A superfície favorece pedra e ouro por minuto.
+          </p>
+        </section>
+        <section class="panel arena-panel" aria-labelledby="combat-title">
+          <div class="panel-heading">
+            <h2 id="combat-title">Combate</h2>
+            <span id="monster-level">Nível 1</span>
+          </div>
+          <div class="enemy-status">
+            <div class="line-label">
+              <strong id="monster-name">Gosma</strong>
+              <span id="monster-hp">24 / 24</span>
+            </div>
+            <div class="meter enemy-meter">
+              <i id="monster-health"> </i>
+            </div>
+            <div class="enemy-details">
+              <span id="monster-damage">8 de dano</span>
+              <span id="monster-speed">1,5 s / ataque</span>
+              <span class="enemy-reward">
+                <img src="assets/coin.svg" alt="" />
+                <strong id="monster-coins">10</strong> / vitória</span
+              >
+            </div>
+          </div>
+          <div class="battle-scene" id="battle-scene" aria-hidden="true">
+            <div class="scene-grain"></div>
+            <div class="scene-ground"></div>
+            <img
+              id="warrior-art"
+              class="warrior-art"
+              src="assets/hero-wood.svg"
+              alt=""
+            />
+            <img id="monster-art" class="monster-art" src="assets/slime.svg" alt="" />
+            <span class="damage-number hero-damage" id="hero-damage-number"> </span>
+            <span class="damage-number enemy-damage" id="monster-damage-number"> </span>
+            <div class="battle-message" id="battle-message">
+              Selecione um alvo e inicie o combate.
+            </div>
+          </div>
+          <div class="arena-controls">
+            <div id="forecast" class="forecast"></div>
+            <div class="turn-row">
+              <span id="turn-label">Próximo turno</span>
+              <div class="action-track">
+                <i id="fight-progress"> </i>
+              </div>
+              <span id="fight-timer">1,5 s</span>
+            </div>
+            <div class="battle-buttons">
+              <button class="button danger" id="fight">
+                <img src="assets/sword.svg" alt="" />
+                <span id="fight-label">Combater</span>
+              </button>
+              <button class="button secondary" id="rest">
+                <span class="heart" aria-hidden="true">♡</span>
+                <span id="rest-label">Descansar</span>
+              </button>
+            </div>
+          </div>
+        </section>
+        <section class="panel equipment-panel" aria-labelledby="equipment-title">
+          <div class="panel-heading">
+            <h2 id="equipment-title">Equipamento</h2>
+          </div>
+          <div class="equipped">
+            <img src="assets/sword.svg" alt="" />
+            <div>
+              <strong id="sword-name">Espada de madeira</strong>
+              <small> <b id="sword-damage">4</b> de dano · equipada</small>
+            </div>
+          </div>
+          <section class="sword-upgrade">
+            <label for="forge-select">Receita de melhoria</label>
+            <select id="forge-select">
+              <option value="pedra">Espada de pedra</option>
+              <option value="ouro">Espada de ouro</option>
+              <option value="diamante">Espada de diamante</option>
+            </select>
+            <div class="upgrade-title">
+              <img id="recipe-art" src="assets/ore-stone.svg" alt="" />
+              <div>
+                <strong id="recipe-title">Pedra</strong>
+                <small id="recipe-damage">4 → 12 de dano</small>
+              </div>
+            </div>
+            <div class="recipe-costs" id="recipe-costs"></div>
+            <button class="button secondary full" id="craft">Forjar espada</button>
+            <p class="panel-note" id="craft-note"></p>
+          </section>
+          <section class="pickaxe-upgrade">
+            <div class="upgrade-title">
+              <img src="assets/pickaxe.svg" alt="" />
+              <div>
+                <strong id="pickaxe-level">Picareta · nível 1</strong>
+                <small id="pickaxe-next">Próximo: nível 2</small>
+              </div>
+            </div>
+            <div class="line-label upgrade-price">
+              <span>Melhoria</span>
+              <strong id="pickaxe-cost">100 moedas</strong>
+            </div>
+            <button class="button primary full" id="upgrade-pickaxe">
+              Melhorar picareta
+            </button>
+            <p id="pickaxe-effect" class="panel-note"></p>
+          </section>
+        </section>
+      </main>
+      <section class="target-strip" aria-label="Selecionar inimigo">
+        <div class="strip-label">
+          <strong>Escolher alvo</strong>
+          <span id="campaign-progress">0 / 10 vencidos</span>
+        </div>
+        <div class="enemy-list" id="enemy-list"></div>
+      </section>
+      <section class="event-strip" aria-label="Último acontecimento">
+        <strong>Eventos</strong>
+        <p id="journal" aria-live="polite"></p>
+      </section>
+    </section>
+    <section class="mathematics panel" id="mathematics" aria-labelledby="math-title">
+      <div class="panel-heading">
+        <h2 id="math-title">Matemática do jogo</h2>
+        <a href="#">Voltar ao jogo ↑</a>
+      </div>
+      <div class="math-grid">
+        <article>
+          <h3 id="probability-title">Probabilidade · superfície</h3>
+          <p id="sample-space"></p>
+          <div id="probability-rows"></div>
+          <p>
+            <strong id="area-draw-total">0</strong> sorteios nesta área.
+            <span id="total-draws"> </span>
+          </p>
+          <p id="legacy-history" class="history-note" hidden></p>
+          <p id="production-rate"></p>
+          <label for="draw-count"
+            >Depois de
+            <input id="draw-count" type="number" min="1" max="10000" value="20" />
+            escavações independentes nesta área:</label
+          >
+          <div class="formula">
+            <strong id="diamond-chance"> </strong>
+            <span>de chance de ao menos um diamante</span>
+            <code id="diamond-formula"> </code>
+          </div>
+          <p>
+            Os sorteios são independentes dentro desta configuração. Trocar a área muda
+            as probabilidades; a picareta só muda o intervalo. O próximo resultado não
+            depende dos anteriores.
+          </p>
+        </article>
+        <article>
+          <h3>Conjuntos e receitas</h3>
+          <label for="recipe-select"
+            >Comparar com
+            <select id="recipe-select">
+              <option value="pedra">espada de pedra</option>
+              <option value="ouro" selected>espada de ouro</option>
+              <option value="diamante">espada de diamante</option>
+            </select>
+          </label>
+          <div class="set-definitions">
+            <p><b>A</b> Tipos no inventário <code id="set-a">∅</code></p>
+            <p><b>B</b> Tipos exigidos <code id="set-b"> </code></p>
+          </div>
+          <dl class="set-operations">
+            <div>
+              <dt>A ∪ B · união</dt>
+              <dd id="set-union"></dd>
+            </div>
+            <div>
+              <dt>A ∩ B · interseção</dt>
+              <dd id="set-intersection"></dd>
+            </div>
+            <div>
+              <dt>A − B · diferença</dt>
+              <dd id="set-difference"></dd>
+            </div>
+            <div>
+              <dt>B − A · tipos faltantes</dt>
+              <dd id="set-missing"></dd>
+            </div>
+          </dl>
+          <p class="subset" id="set-subset"></p>
+          <p>
+            Um conjunto não repete elementos: 20 pedras e 1 ouro formam {pedra, ouro}. B
+            ⊆ A verifica tipos; a forja também exige quantidades.
+          </p>
+          <h3>Moedas e tempo</h3>
+          <p>
+            Repetir um inimigo vencido também rende moedas. Avalie recompensa, tempo de
+            ataque e descanso: um alvo seguro pode render menos por minuto que um alvo
+            forte. Moedas financiam os dois níveis de melhoria da picareta; após o nível
+            3 ficam guardadas.
+          </p>
+        </article>
+      </div>
+    </section>
+    <footer>
+      POO · Conjuntos · Probabilidade <span>Progresso local. Sem ganho offline.</span>
+    </footer>
+    <script type="module" src="src/principal.mjs"></script>
+  </body>
+</html>
